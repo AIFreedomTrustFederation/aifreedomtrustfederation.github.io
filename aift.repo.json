@@ -1,13 +1,14 @@
 {
   "schema": "https://aifreedomtrust.org/schemas/aift.repo.schema.json",
   "name": "aifreedomtrustfederation.github.io",
-  "layer": "federated",
-  "role": "federated repository participating in the AIFT operating system",
+  "layer": "portal-index",
+  "role": "root GitHub Pages landing map and public router for federation project surfaces",
   "workspacePath": "/data/data/com.termux/files/home/AIFT/aifreedomtrustfederation.github.io",
   "federation": {
     "workspace": "AIFT",
     "controlPlane": "/data/data/com.termux/files/home/AIFT/aift-os.sh",
-    "manifest": "/data/data/com.termux/files/home/AIFT/manifests/workspace.json"
+    "manifest": "/data/data/com.termux/files/home/AIFT/manifests/workspace.json",
+    "missionPortal": "www.aifreedomtrust.com"
   },
   "commands": {
     "status": "git status --short",
@@ -18,6 +19,7 @@
     "localFirst": true,
     "inspectable": true,
     "sovereignByDefault": true,
-    "aiBehindProviderInterfaces": true
+    "aiBehindProviderInterfaces": true,
+    "routeToProjectSourceOfTruth": true
   }
 }
