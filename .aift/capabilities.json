@@ -13,11 +13,12 @@
     },
     {
       "name": "verify",
-      "status": "planned",
+      "status": "ready",
       "version": 0,
-      "evidence": "not proven yet",
+      "command": ".aift/commands/verify.sh",
+      "evidence": "validates federation manifests, public route pairs, local paths, and shell syntax",
       "description": "Validate repository health",
-      "lastChecked": "2026-06-30T23:37:27Z"
+      "lastChecked": "2026-09-18T16:23:48Z"
     },
     {
       "name": "test",
