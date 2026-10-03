@@ -61,6 +61,8 @@ repositories: set[str] = set()
 pages: set[str] = set()
 for link in parser.links:
     parsed = urlparse(link)
+    if parsed.username is not None or parsed.password is not None:
+        fail(f"credentials embedded in route: {link}")
     if parsed.scheme:
         if parsed.scheme != "https":
             fail(f"non-HTTPS route: {link}")
