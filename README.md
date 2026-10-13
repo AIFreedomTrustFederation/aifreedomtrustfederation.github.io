@@ -58,7 +58,7 @@ The covenant loop is intentionally lightweight here:
 Receive → Inspect → Name → Propose → Consent → Act → Verify → Record → Return
 ```
 
-**Receive** begins with a new or changed public project route. **Inspect** checks the actual repository, metadata, Pages path, and public availability. **Name** uses the project's declared identity and role rather than generic federation language. **Propose** determines whether the project belongs on the root map and how it should be described in one clear sentence. **Consent** applies where publication could expose a private or sensitive project. **Act** updates `index.html`. **Verify** confirms that the destination resolves and that the root page still renders legibly. **Record** preserves the routing change in Git. **Return** sends the visitor onward to the project that can answer the next question.
+**Receive** begins with a new or changed public project route. **Inspect** checks the actual repository, metadata, Pages path, and public availability. **Name** uses the project's declared identity and role rather than generic federation language. **Propose** determines whether the project belongs on the root map and how it should be described in one clear sentence. **Consent** applies where publication could expose a private or sensitive project. **Act** updates `index.html`. **Verify** checks approved destination formats and paired project routes offline; live URL availability and visual legibility require separate checks. **Record** preserves the routing change in Git. **Return** sends the visitor onward to the project that can answer the next question.
 
 Repository state can be checked with:
 
@@ -67,6 +67,15 @@ git status --short
 git pull --ff-only
 git status --short
 ```
+
+Run the offline route integrity check and its failure-case regression suite with:
+
+```bash
+.aift/commands/verify.sh
+python3 -m unittest discover -s tests -v
+```
+
+The checker rejects unapproved external destinations, malformed project routes, missing local paths, and mismatched repository/Pages pairs. It **does not perform network requests** and cannot prove that a remote repository or Pages deployment is currently reachable.
 
 Because this is a static routing surface, verification also means opening the published page and checking that cards, links, layout, and project names remain readable on ordinary screen sizes.
 

@@ -7,6 +7,7 @@ cd "$repo_root"
 python3 - <<'PY'
 from html.parser import HTMLParser
 import json
+import re
 from pathlib import Path, PurePosixPath
 from urllib.parse import urlparse
 
@@ -63,17 +64,27 @@ for link in parser.links:
     parsed = urlparse(link)
     if parsed.username is not None or parsed.password is not None:
         fail(f"credentials embedded in route: {link}")
-    if parsed.scheme:
+    if parsed.scheme or parsed.netloc:
         if parsed.scheme != "https":
             fail(f"non-HTTPS route: {link}")
+        if parsed.netloc not in ("github.com", "aifreedomtrustfederation.github.io"):
+            fail(f"unapproved external route: {link}")
+        if parsed.query or parsed.fragment:
+            fail(f"non-canonical route: {link}")
+        parts = [part for part in parsed.path.split("/") if part]
+        name = parts[-1] if parts else ""
+        if not re.fullmatch(r"[A-Za-z0-9_.-]+", name) or name in (".", ".."):
+            fail(f"invalid project name in route: {link}")
         if parsed.netloc == "github.com":
-            parts = [part for part in parsed.path.split("/") if part]
-            if len(parts) == 2 and parts[0] == "AIFreedomTrustFederation":
-                repositories.add(parts[1])
-        elif parsed.netloc == "aifreedomtrustfederation.github.io":
-            parts = [part for part in parsed.path.split("/") if part]
-            if parts:
-                pages.add(parts[0])
+            if (len(parts) != 2 or parts[0] != "AIFreedomTrustFederation"
+                    or parsed.path not in (f"/AIFreedomTrustFederation/{name}",
+                                           f"/AIFreedomTrustFederation/{name}/")):
+                fail(f"unexpected repository route: {link}")
+            repositories.add(name)
+        else:
+            if len(parts) != 1 or parsed.path not in (f"/{name}", f"/{name}/"):
+                fail(f"unexpected Pages route: {link}")
+            pages.add(name)
         continue
 
     path = PurePosixPath(parsed.path)
