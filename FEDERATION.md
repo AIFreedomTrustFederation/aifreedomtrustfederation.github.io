@@ -43,7 +43,7 @@ git pull --ff-only
 Verify:
 
 ```bash
-git status --short
+.aift/commands/verify.sh
 ```
 
 ## Federation Metadata
