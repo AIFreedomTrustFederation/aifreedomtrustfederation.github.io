@@ -72,7 +72,7 @@ Run the dependency-free route gate and its regression tests from the repository 
 
 ```bash
 .aift/commands/verify.sh
-python3 -m unittest discover -s tests -v
+python3 -B -m unittest discover -s tests -v
 ```
 
 The route gate rejects protocol-relative links (such as `//example.com`) and malformed HTTPS links without a host, in addition to its manifest, route-pair, local-path, and shell checks. It does not perform live HTTP requests.
