@@ -27,6 +27,9 @@ jobs:
           git fetch --depth=1 origin "$TARGET_SHA"
           git checkout --detach FETCH_HEAD
 
+      - name: Regression-test route verification
+        run: python3 -m unittest discover -s tests -v
+
       - name: Verify federation manifests and routes
         run: .aift/commands/verify.sh
 

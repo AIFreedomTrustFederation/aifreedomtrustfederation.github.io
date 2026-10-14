@@ -63,9 +63,13 @@ for link in parser.links:
     parsed = urlparse(link)
     if parsed.username is not None or parsed.password is not None:
         fail(f"credentials embedded in route: {link}")
+    if parsed.netloc and not parsed.scheme:
+        fail(f"protocol-relative route is not allowed: {link}")
     if parsed.scheme:
         if parsed.scheme != "https":
             fail(f"non-HTTPS route: {link}")
+        if not parsed.netloc:
+            fail(f"HTTPS route has no host: {link}")
         if parsed.netloc == "github.com":
             parts = [part for part in parsed.path.split("/") if part]
             if len(parts) == 2 and parts[0] == "AIFreedomTrustFederation":
