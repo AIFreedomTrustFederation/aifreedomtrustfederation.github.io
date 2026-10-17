@@ -77,6 +77,41 @@ class RouteVerificationTests(unittest.TestCase):
         result = self.verify('<a href="docs/info.html">Local</a>')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_crossed_card_destinations_fail_even_when_global_sets_match(self):
+        html = """<html><body>
+        <article><a href="https://github.com/AIFreedomTrustFederation/VPS">Repository</a>
+        <a href="https://aifreedomtrustfederation.github.io/booksmith-ai/">Project</a></article>
+        <article><a href="https://github.com/AIFreedomTrustFederation/booksmith-ai">Repository</a>
+        <a href="https://aifreedomtrustfederation.github.io/VPS/">Project</a></article>
+        </body></html>"""
+        (self.root / "index.html").write_text(html, encoding="utf-8")
+        result = subprocess.run(["sh", ".aift/commands/verify.sh"], cwd=self.root, capture_output=True, text=True, timeout=10)
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("article 1 route pair mismatch", result.stderr)
+
+    def test_missing_card_destination_fails_despite_global_pair(self):
+        html = """<html><body>
+        <article><a href="https://github.com/AIFreedomTrustFederation/VPS">Repository</a></article>
+        <article><a href="https://aifreedomtrustfederation.github.io/VPS/">Project</a></article>
+        </body></html>"""
+        (self.root / "index.html").write_text(html, encoding="utf-8")
+        result = subprocess.run(["sh", ".aift/commands/verify.sh"], cwd=self.root, capture_output=True, text=True, timeout=10)
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("article 1 route pair mismatch", result.stderr)
+
+    def test_matching_card_destinations_pass(self):
+        html = """<html><body>
+        <article><a href="https://github.com/AIFreedomTrustFederation/VPS">Repository</a>
+        <a href="https://aifreedomtrustfederation.github.io/VPS/">Project</a></article>
+        <article><a href="https://github.com/AIFreedomTrustFederation/booksmith-ai">Repository</a>
+        <a href="https://aifreedomtrustfederation.github.io/booksmith-ai/">Project</a>
+        <a href="https://docs.example.org/help">Documentation</a></article>
+        </body></html>"""
+        (self.root / "index.html").write_text(html, encoding="utf-8")
+        result = subprocess.run(["sh", ".aift/commands/verify.sh"], cwd=self.root, capture_output=True, text=True, timeout=10)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("2 paired public project routes", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

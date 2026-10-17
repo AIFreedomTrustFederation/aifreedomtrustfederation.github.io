@@ -75,7 +75,7 @@ Run the dependency-free route gate and its regression tests from the repository 
 python3 -B -m unittest discover -s tests -v
 ```
 
-The route gate rejects protocol-relative links (such as `//example.com`) and malformed HTTPS links without a host, in addition to its manifest, route-pair, local-path, and shell checks. It does not perform live HTTP requests.
+The route gate rejects protocol-relative links (such as `//example.com`) and malformed HTTPS links without a host, in addition to its manifest, route-pair, local-path, and shell checks. Each project `<article>` card must pair exactly one Federation repository link with the matching GitHub Pages project path; globally balanced but swapped or incomplete card links fail verification. It does not perform live HTTP requests or prove that external destinations are available.
 
 Because this is a static routing surface, verification also means opening the published page and checking that cards, links, layout, and project names remain readable on ordinary screen sizes.
 

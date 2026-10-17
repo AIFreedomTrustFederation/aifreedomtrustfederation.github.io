@@ -40,12 +40,23 @@ class LinkParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__()
         self.links: list[str] = []
+        self.cards: list[list[str]] = []
+        self.active_card: list[str] | None = None
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        if tag == "a":
+        if tag == "article":
+            self.active_card = []
+            self.cards.append(self.active_card)
+        elif tag == "a":
             href = dict(attrs).get("href")
             if href:
                 self.links.append(href)
+                if self.active_card is not None:
+                    self.active_card.append(href)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "article":
+            self.active_card = None
 
 
 parser = LinkParser()
@@ -88,6 +99,27 @@ for link in parser.links:
         fail(f"route escapes repository: {link}")
     if not target.exists():
         fail(f"missing local route: {link}")
+
+# Global route-set equality cannot detect links swapped between cards.
+# Verify each project card directs readers to its own repository and Pages site.
+for card_number, card_links in enumerate(parser.cards, start=1):
+    card_repositories: list[str] = []
+    card_pages: list[str] = []
+    for link in card_links:
+        parsed = urlparse(link)
+        parts = [part for part in parsed.path.split("/") if part]
+        if parsed.scheme != "https":
+            continue  # The global validator rejects unsafe schemes and local paths.
+        if parsed.netloc == "github.com" and len(parts) == 2 and parts[0] == "AIFreedomTrustFederation":
+            card_repositories.append(parts[1])
+        elif parsed.netloc == "aifreedomtrustfederation.github.io" and parts:
+            card_pages.append(parts[0])
+    if card_repositories or card_pages:
+        if len(card_repositories) != 1 or len(card_pages) != 1 or card_repositories[0] != card_pages[0]:
+            fail(
+                f"article {card_number} route pair mismatch: "
+                f"repositories={card_repositories}, Pages={card_pages}"
+            )
 
 if repositories != pages:
     missing_pages = sorted(repositories - pages)
