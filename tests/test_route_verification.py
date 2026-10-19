@@ -99,6 +99,17 @@ class RouteVerificationTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("article 1 route pair mismatch", result.stderr)
 
+    def test_empty_article_card_fails_despite_valid_global_pair(self):
+        html = """<html><body>
+        <article><a href="https://github.com/AIFreedomTrustFederation/VPS">Repository</a>
+        <a href="https://aifreedomtrustfederation.github.io/VPS/">Project</a></article>
+        <article><h2>Broken project</h2><p>No destinations</p></article>
+        </body></html>"""
+        (self.root / "index.html").write_text(html, encoding="utf-8")
+        result = subprocess.run(["sh", ".aift/commands/verify.sh"], cwd=self.root, capture_output=True, text=True, timeout=10)
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("article 2 route pair mismatch", result.stderr)
+
     def test_matching_card_destinations_pass(self):
         html = """<html><body>
         <article><a href="https://github.com/AIFreedomTrustFederation/VPS">Repository</a>
