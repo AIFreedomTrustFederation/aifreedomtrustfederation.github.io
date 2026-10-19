@@ -114,12 +114,11 @@ for card_number, card_links in enumerate(parser.cards, start=1):
             card_repositories.append(parts[1])
         elif parsed.netloc == "aifreedomtrustfederation.github.io" and parts:
             card_pages.append(parts[0])
-    if card_repositories or card_pages:
-        if len(card_repositories) != 1 or len(card_pages) != 1 or card_repositories[0] != card_pages[0]:
-            fail(
-                f"article {card_number} route pair mismatch: "
-                f"repositories={card_repositories}, Pages={card_pages}"
-            )
+    if len(card_repositories) != 1 or len(card_pages) != 1 or card_repositories[0] != card_pages[0]:
+        fail(
+            f"article {card_number} route pair mismatch: "
+            f"repositories={card_repositories}, Pages={card_pages}"
+        )
 
 if repositories != pages:
     missing_pages = sorted(repositories - pages)
