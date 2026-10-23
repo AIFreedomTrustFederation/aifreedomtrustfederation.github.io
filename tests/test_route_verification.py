@@ -71,6 +71,29 @@ class RouteVerificationTests(unittest.TestCase):
         result = self.verify('<a href="https://github.com/AIFreedomTrustFederation/Another">Another</a>')
         self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_external_base_href_cannot_retarget_local_routes(self):
+        # A <base> in <head> changes how browsers resolve relative hrefs.
+        (self.root / "docs").mkdir()
+        (self.root / "docs/info.html").write_text("ok", encoding="utf-8")
+        html = (
+            '<html><head><base href="https://untrusted.example/"></head><body>'
+            + "\n".join(VALID_LINKS)
+            + '<a href="docs/info.html">Local</a></body></html>'
+        )
+        (self.root / "index.html").write_text(html, encoding="utf-8")
+        result = subprocess.run(["sh", ".aift/commands/verify.sh"], cwd=self.root, capture_output=True, text=True, timeout=10)
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("base href", result.stderr)
+
+    def test_protocol_relative_base_href_is_rejected(self):
+        result = self.verify('<base href="//untrusted.example/">')
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("base href", result.stderr)
+
+    def test_base_target_without_href_preserves_routes(self):
+        result = self.verify('<base target="_self">')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_valid_local_route_passes(self):
         (self.root / "docs").mkdir()
         (self.root / "docs/info.html").write_text("ok", encoding="utf-8")

@@ -40,6 +40,7 @@ class LinkParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__()
         self.links: list[str] = []
+        self.base_hrefs: list[str | None] = []
         self.cards: list[list[str]] = []
         self.active_card: list[str] | None = None
 
@@ -47,6 +48,10 @@ class LinkParser(HTMLParser):
         if tag == "article":
             self.active_card = []
             self.cards.append(self.active_card)
+        elif tag == "base":
+            attributes = dict(attrs)
+            if "href" in attributes:
+                self.base_hrefs.append(attributes["href"])
         elif tag == "a":
             href = dict(attrs).get("href")
             if href:
@@ -64,6 +69,9 @@ try:
     parser.feed(Path("index.html").read_text(encoding="utf-8"))
 except (OSError, UnicodeError) as error:
     fail(f"index.html: {error}")
+
+if parser.base_hrefs:
+    fail("index.html contains a base href that overrides validated local routes")
 
 if not parser.links:
     fail("index.html contains no routes")
