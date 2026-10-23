@@ -94,6 +94,26 @@ class RouteVerificationTests(unittest.TestCase):
         result = self.verify('<base target="_self">')
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_meta_refresh_redirect_cannot_override_valid_routes(self):
+        result = self.verify('<meta http-equiv="refresh" content="0;url=https://untrusted.example/">')
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("meta refresh", result.stderr)
+
+    def test_mixed_case_meta_refresh_redirect_is_rejected(self):
+        result = self.verify('<META HTTP-EQUIV="ReFrEsH" CONTENT="0; URL=https://untrusted.example/">')
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("meta refresh", result.stderr)
+
+    def test_inline_event_handler_cannot_override_valid_href(self):
+        result = self.verify('<a href="https://docs.example.org" onclick="location.href=\'https://untrusted.example/\'">Docs</a>')
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("inline event handler", result.stderr)
+
+    def test_script_redirect_cannot_override_valid_routes(self):
+        result = self.verify('<script>location.replace("https://untrusted.example/")</script>')
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("script element", result.stderr)
+
     def test_valid_local_route_passes(self):
         (self.root / "docs").mkdir()
         (self.root / "docs/info.html").write_text("ok", encoding="utf-8")

@@ -41,10 +41,20 @@ class LinkParser(HTMLParser):
         super().__init__()
         self.links: list[str] = []
         self.base_hrefs: list[str | None] = []
+        self.active_content: list[str] = []
         self.cards: list[list[str]] = []
         self.active_card: list[str] | None = None
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attributes = dict(attrs)
+        # The root index is a static router: executable content can override
+        # otherwise valid hrefs without appearing in the link inventory.
+        if tag == "script":
+            self.active_content.append("script element")
+        if any(name.startswith("on") for name, _ in attrs):
+            self.active_content.append("inline event handler")
+        if tag == "meta" and (attributes.get("http-equiv") or "").strip().lower() == "refresh":
+            self.active_content.append("meta refresh")
         if tag == "article":
             self.active_card = []
             self.cards.append(self.active_card)
@@ -72,6 +82,10 @@ except (OSError, UnicodeError) as error:
 
 if parser.base_hrefs:
     fail("index.html contains a base href that overrides validated local routes")
+
+if parser.active_content:
+    fail("index.html contains active navigation that bypasses validated routes: "
+         + ", ".join(sorted(set(parser.active_content))))
 
 if not parser.links:
     fail("index.html contains no routes")
