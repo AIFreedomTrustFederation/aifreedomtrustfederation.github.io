@@ -167,5 +167,22 @@ class RouteVerificationTests(unittest.TestCase):
         self.assertIn("2 paired public project routes", result.stdout)
 
 
+    def test_embedded_active_content_cannot_bypass_route_inventory(self):
+        # These elements can load or navigate to unreviewed destinations
+        # without contributing an <a href> to the validated link set.
+        cases = (
+            ('<iframe src="https://untrusted.example/"></iframe>', "iframe element"),
+            ('<iframe srcdoc="&lt;script&gt;fetch(1)&lt;/script&gt;"></iframe>', "iframe element"),
+            ('<object data="https://untrusted.example/"></object>', "object element"),
+            ('<embed src="https://untrusted.example/">', "embed element"),
+            ('<form action="https://untrusted.example/"><button>Continue</button></form>', "form element"),
+        )
+        for markup, expected in cases:
+            with self.subTest(markup=markup):
+                result = self.verify(markup)
+                self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn(expected, result.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()
