@@ -51,6 +51,10 @@ class LinkParser(HTMLParser):
         # otherwise valid hrefs without appearing in the link inventory.
         if tag == "script":
             self.active_content.append("script element")
+        # Embedded documents and forms can load or navigate to destinations
+        # that are absent from the validated <a href> route inventory.
+        if tag in {"iframe", "object", "embed", "form"}:
+            self.active_content.append(f"{tag} element")
         if any(name.startswith("on") for name, _ in attrs):
             self.active_content.append("inline event handler")
         if tag == "meta" and (attributes.get("http-equiv") or "").strip().lower() == "refresh":
