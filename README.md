@@ -41,6 +41,8 @@ The root page currently routes readers toward public Federation surfaces such as
 
 The deeper layer map is maintained by the project metadata themselves. This root index should not invent a repository role when `aift.repo.json`, the repository code, and its own README say otherwise.
 
+**Public-card maturity boundary:** The Booksmith AI card in `index.html` describes a “live book registry,” while [Booksmith's source README at revision `de8a8e3`](https://github.com/AIFreedomTrustFederation/booksmith-ai/blob/de8a8e3c484b4923b613c4c9a5e5f799efa12c27/README.md) describes its public Pages build as a static, read-only portal and its writable Runtime as local/private. The root route gate checks link pairing and static markup, not registry freshness, live Runtime availability, author approval, or publication authorization. The card's wording must not be treated as independent evidence of those capabilities.
+
 Its relationship to neighboring portal repositories is simple:
 
 - `aifreedomtrustfederation.github.io` is the **root router**.
