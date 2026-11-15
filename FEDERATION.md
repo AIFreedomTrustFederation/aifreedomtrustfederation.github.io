@@ -2,11 +2,11 @@
 
 ## Layer
 
-`federated`
+`portal-index`
 
 ## Role
 
-federated repository participating in the AIFT operating system
+root GitHub Pages landing map and public router for federation project surfaces
 
 ## Operating Principle
 
