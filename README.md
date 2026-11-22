@@ -100,3 +100,10 @@ The root site therefore participates in the same Federation voice without imitat
 ### The Return of the Word
 
 At the root index, the Word returns as a path. The visitor arrives with a question, the map names the relevant part of the Federation, and the reader is returned to the repository where that question belongs. The doorway serves the whole by knowing when to stop speaking and point toward the source.
+
+
+---
+
+## Proposed AIFT Universal OS Integration
+
+The [repository-specific OS alignment guide](docs/aift-universal-os-alignment.md) documents this repository's independent responsibility in a possible native/hosted AIFT application ecosystem: public route index only; no OS/firmware or production endpoint ownership. These are **unverified engineering plans**, linked to the [central architecture and infographics draft](https://github.com/AIFreedomTrustFederation/AIFT-OS/pull/92), not a change to production services or permissions.
