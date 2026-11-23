@@ -107,3 +107,9 @@ At the root index, the Word returns as a path. The visitor arrives with a questi
 ## Proposed AIFT Universal OS Integration
 
 The [repository-specific OS alignment guide](docs/aift-universal-os-alignment.md) documents this repository's independent responsibility in a possible native/hosted AIFT application ecosystem: public route index only; no OS/firmware or production endpoint ownership. These are **unverified engineering plans**, linked to the [central architecture and infographics draft](https://github.com/AIFreedomTrustFederation/AIFT-OS/pull/92), not a change to production services or permissions.
+
+## Federation-wide continuity and development policy
+
+The [Federation Prime Directive](FEDERATION-PRIME-DIRECTIVE.md) prioritizes perpetual continuity, integrity, sovereignty, and recoverability. Current architecture, workflows, capabilities, and deployment descriptions are provisional development-stage decisions, not permanent limitations. Do not claim unverified capabilities are operational.
+
+Prefer direct commits to the configured default branch for reversible, low-risk work when protections permit. Where PRs are required, merge only after exact-head checks, required reviews, mergeability, and recovery gates pass. Eligible low-risk PRs may auto-merge. A default-branch commit is not authorization for production deployment or destructive changes. Use the existing AIFT Federation Automation GitHub App as the preferred shared automation identity.
